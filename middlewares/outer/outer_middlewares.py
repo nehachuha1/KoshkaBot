@@ -1,10 +1,11 @@
-from aiogram import BaseMiddleware
+from aiogram import BaseMiddleware, Bot
 from aiogram.types import TelegramObject, User
 
 from typing import Any, Callable, Awaitable, Dict
 import logging
 
 from database.database import Database, CachedDatabase
+from config.config import load_env_values
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ class MainOuterMiddleware(BaseMiddleware):
             self,
             handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
             event: TelegramObject,
-            data: Dict[str, Any]
+            data: Dict[str, Any], 
         ) -> Any:
         
         db = Database()
@@ -25,9 +26,7 @@ class MainOuterMiddleware(BaseMiddleware):
         data['cached_db'] = cached_db
         data['is_registered'] = db.check_registration(user.id)
         data['is_main_admin'] = db.check_main_admin(user.id)
-
-        result = await handler(event, data)
-        return result
+        return await handler(event, data)
     
 class CheckRegistration(BaseMiddleware):
     async def __call__(

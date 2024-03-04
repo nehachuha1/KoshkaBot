@@ -6,8 +6,17 @@ LEXICON_RU = {'/start': 'START DESC',
               'error_room_input': 'INVALID ROOM NUMBER',
               'main_menu_message': 'Main menu message',
               'to_use_menu': 'To use menu',
+              'loading_shops_1': 'Loading list of shops...',
 
-              'USER_INFO': '<b>Информация о пользователе:\n\nTelegram ID: {tg_id}\nИмя: {full_name}\nКомната проживания: {room}\nКоличество заказов: {orders_count}</b>'
+              'loading_shops_2': 'Baking pies...',
+              'loading_shops_3': 'Cooking some pasta...',
+              'loading_shops_4': 'Do some hiking...',
+              'loading_shops_5': 'Laying on a sofa...',
+              
+              'error_pagination': 'Pagination error!',
+
+              'USER_INFO': '<b>Информация о пользователе:\n\nTelegram ID: {tg_id}\nИмя: {full_name}\nКомната проживания: {room}\nКоличество заказов: {orders_count}</b>',
+              'SHOP_INFO': '<b>Магазин "{name}"\n\nОписание:\n{description}\n\nСтатус: {is_active}\nКонтакт для связи: {admin_id}</b>'
               }
 
 LEXICON_RU_BUTTONS = {

@@ -5,9 +5,11 @@ import logging
 
 from config.config import load_env_values, Config
 from middlewares.outer.outer_middlewares import MainOuterMiddleware, CheckRegistration
+from middlewares.inner.inner_middlewares import ViewShops
 
 from handlers.registration_handler import registration_router
 from handlers.main_menu import main_menu_router
+from handlers.shops_list import shops_list_router
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,7 @@ async def main() -> None:
     # сюда подключить routers
     dp.include_router(registration_router)
     dp.include_router(main_menu_router)
+    dp.include_router(shops_list_router)
 
     # сюда подключить миддлвари
     dp.update.outer_middleware(MainOuterMiddleware())

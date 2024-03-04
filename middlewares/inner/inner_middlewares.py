@@ -6,14 +6,14 @@ import logging
 
 from database.database import Database, CachedDatabase
 
-class CurrentState(BaseMiddleware):
+class ViewShops(BaseMiddleware):
     async def __call__(
             self,
             handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
             event: TelegramObject,
             data: Dict[str, Any]
         ) -> Any:
-
-        result = await handler(event, data)
+        db = Database()
         
+        result = await handler(event, data)
         return result

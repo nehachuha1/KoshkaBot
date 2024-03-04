@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from dotenv import dotenv_values
 import logging
 
+DEFAULT_SHOP_PHOTO_ID='AgACAgUAAxkBAAICG2Xl2wecngswRxnUAe8lN1bRkGQdAAL0ujEbWDApV7UkLxai6G3RAQADAgADcwADNAQ'
+
 logger = logging.getLogger(__name__)
 
 @dataclass

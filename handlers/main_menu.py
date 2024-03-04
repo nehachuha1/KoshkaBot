@@ -29,9 +29,17 @@ async def process_get_user_stats(callback: CallbackQuery, db: Database):
         reply_markup=cancel_kb
         )
 
-@main_menu_router.callback_query(F.data.in_(['cancel']))
+@main_menu_router.callback_query(F.data == 'cancel')
 async def process_cancel_to_menu(callback: CallbackQuery):
     await callback.message.edit_text(
+        parse_mode='HTML',
+        text=LEXICON_RU['main_menu_message'],
+        reply_markup=main_menu_kb)
+    
+@main_menu_router.callback_query(F.data == 'cancel_from_shops')
+async def process_cancel_to_menu(callback: CallbackQuery):
+    await callback.message.delete()
+    await callback.message.answer(
         parse_mode='HTML',
         text=LEXICON_RU['main_menu_message'],
         reply_markup=main_menu_kb)

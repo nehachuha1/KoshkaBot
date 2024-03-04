@@ -68,3 +68,21 @@ class Database:
     '''.format(username=username))
         result = self._cur.fetchone()
         return result
+    
+    def get_current_shop_info(self, current_shop: int  = 1) -> tuple:
+        self._cur.execute('''
+        SELECT admin_id, name, description, is_active, shop_id, shop_photo
+	    FROM main.shops
+        WHERE shop_id={current_shop};
+        '''.format(current_shop=current_shop))
+
+        result = self._cur.fetchone()
+        return result
+    
+    def get_count_of_shops(self) -> int:
+        self._cur.execute('''
+        SELECT admin_id, moderators_ids, name, description, is_active, shop_id
+	    FROM main.shops;        
+    ''')
+        result = self._cur.fetchall()
+        return len(result)
