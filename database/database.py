@@ -59,4 +59,12 @@ class Database:
         
     def check_main_admin(self, user_id: str | None = None) -> bool:
         return user_id in ['5468245021', '408789367']
-
+    
+    def get_user_info(self, username: str| None = None) -> tuple:
+        self._cur.execute('''
+        SELECT username, full_name, room, is_seller, orders_count
+        FROM main.users
+        WHERE username='{username}';
+    '''.format(username=username))
+        result = self._cur.fetchone()
+        return result

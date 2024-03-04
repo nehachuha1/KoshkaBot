@@ -50,6 +50,8 @@ async def process_room_accept_command(message: Message, state: FSMContext, cache
     result = await state.get_data()
     cached_db.set_values(str(message.from_user.id), result)
     await state.clear()
+    await message.answer(parse_mode='HTML',
+                         text=LEXICON_RU['to_use_menu'])
 
 @registration_router.message(StateFilter(RegistrationFillForm.room), ~F.text.isalpha())
 async def process_room_decline_command(message: Message, state: FSMContext):
