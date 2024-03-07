@@ -86,3 +86,22 @@ class Database:
     ''')
         result = self._cur.fetchall()
         return len(result)
+    
+    def get_products_of_shop(self, shop_id: int = None) -> list:
+        self._cur.execute('''
+        SELECT shop_id, name, description, price, category, product_id
+	    FROM main.goods_table
+        WHERE shop_id={shop_id};
+        '''.format(shop_id=shop_id))
+        result = self._cur.fetchall()
+        return result
+    
+    def get_current_product_info(self, product_id: int = None) -> tuple:
+        self._cur.execute('''
+        SELECT shop_id, name, description, price, category, product_id
+	    FROM main.goods_table
+        WHERE product_id={product_id};
+        '''.format(product_id=product_id))
+
+        result = self._cur.fetchone()
+        return result

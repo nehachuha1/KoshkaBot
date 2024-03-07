@@ -39,14 +39,15 @@ class CheckRegistration(BaseMiddleware):
         cached_db = data['cached_db']
         db = data['db']
         is_registered = data['is_registered']
-        
         result = await handler(event, data)
         
         if not is_registered:
             user: User = data['event_from_user']
             new_user_data = cached_db.get_values(str(user.id))
             if new_user_data != None:
+                logger.debug(new_user_data)
                 db.register_new_user(new_user_data)
                 cached_db.delete_values(str(user.id))
+                event.answer('Successful registration! Use /menu') #перенести в LEXICON_RU
             return
         return result

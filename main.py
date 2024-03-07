@@ -1,15 +1,17 @@
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 
 import asyncio
 import logging
 
 from config.config import load_env_values, Config
 from middlewares.outer.outer_middlewares import MainOuterMiddleware, CheckRegistration
-from middlewares.inner.inner_middlewares import ViewShops
+from middlewares.inner.inner_middlewares import AcceptingOrder
 
 from handlers.registration_handler import registration_router
 from handlers.main_menu import main_menu_router
 from handlers.shops_list import shops_list_router
+from handlers.shop_interaction import shop_interaction_router
 
 logger = logging.getLogger(__name__)
 
@@ -20,14 +22,16 @@ async def main() -> None:
     logger.info('Starting bot...')
 
     config: Config = load_env_values('.env')
+    storage = MemoryStorage()
 
     bot = Bot(token=config.TgBot.token)
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
     
     # сюда подключить routers
     dp.include_router(registration_router)
     dp.include_router(main_menu_router)
     dp.include_router(shops_list_router)
+    dp.include_router(shop_interaction_router)
 
     # сюда подключить миддлвари
     dp.update.outer_middleware(MainOuterMiddleware())
