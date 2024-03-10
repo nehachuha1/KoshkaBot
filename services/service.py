@@ -2,7 +2,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardButton
 
 from lexicon.lexicon import LEXICON_RU
-from filters.filters import ProductInfoFilter
+from filters.filters import ProductInfoFilter, SellerProductInfoFilter
 
 class RegistrationFillForm(StatesGroup):
     username = State()
@@ -18,11 +18,21 @@ class OrderFillForm(StatesGroup):
     shop_id = State()
     product_id = State()
 
+class ChangeShopName(StatesGroup):
+    shop_name = State()
+
+class ChangeShopDescription(StatesGroup):
+    shop_description = State()
+
+class ChangeShopPhoto(StatesGroup):
+    shop_photo = State()
+
 def prepare_user_info(user_info: tuple = None):
     return LEXICON_RU['USER_INFO'].format(tg_id=user_info[0],
                                           full_name=user_info[1],
                                           room=user_info[2],
-                                          orders_count=0 if not user_info[3] else user_info[3])
+                                          is_seller=user_info[3],
+                                          orders_count=0 if not user_info[4] else user_info[4])
 
 def prepare_list_products_shop(products: tuple = None) -> list:
     buttons = list()
@@ -31,6 +41,22 @@ def prepare_list_products_shop(products: tuple = None) -> list:
         button = InlineKeyboardButton(
             text=product[1],
             callback_data=ProductInfoFilter(
+                shop_id=product[0],
+                name=product[1],
+                product_id=product[-1]
+            ).pack()
+        )
+
+        buttons.append(button)
+    return buttons
+
+def prepare_list_products_shop_seller(products: tuple = None) -> list:
+    buttons = list()
+
+    for product in products:
+        button = InlineKeyboardButton(
+            text=product[1],
+            callback_data=SellerProductInfoFilter(
                 shop_id=product[0],
                 name=product[1],
                 product_id=product[-1]

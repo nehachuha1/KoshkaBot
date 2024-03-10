@@ -12,6 +12,7 @@ from handlers.registration_handler import registration_router
 from handlers.main_menu import main_menu_router
 from handlers.shops_list import shops_list_router
 from handlers.shop_interaction import shop_interaction_router
+from handlers.seller_interaction import seller_router
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ async def main() -> None:
     dp.include_router(main_menu_router)
     dp.include_router(shops_list_router)
     dp.include_router(shop_interaction_router)
+    dp.include_router(seller_router)
 
     # сюда подключить миддлвари
     dp.update.outer_middleware(MainOuterMiddleware())

@@ -3,6 +3,7 @@ from dotenv import dotenv_values
 import logging
 
 DEFAULT_SHOP_PHOTO_ID='AgACAgUAAxkBAAICG2Xl2wecngswRxnUAe8lN1bRkGQdAAL0ujEbWDApV7UkLxai6G3RAQADAgADcwADNAQ'
+ALLOWED_SYMBOLS = 'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя '
 
 logger = logging.getLogger(__name__)
 

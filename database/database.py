@@ -56,6 +56,16 @@ class Database:
             return True
         else:
             return False
+    
+    def get_user_shop(self, username: int = None) -> int:
+        self._cur.execute('''
+        SELECT admin_id, moderators_ids, name, description, is_active, shop_id, shop_photo
+        FROM main.shops
+        WHERE admin_id='{username}';
+        '''.format(username=username))
+        result = self._cur.fetchone()
+
+        return result[-2]
         
     def check_main_admin(self, user_id: str | None = None) -> bool:
         return user_id in ['5468245021', '408789367']
@@ -105,3 +115,31 @@ class Database:
 
         result = self._cur.fetchone()
         return result
+    def change_shop_name(self, shop_id: int = None, new_name: str = None) -> None:
+        self._cur.execute('''
+        UPDATE main.shops
+        SET name='{new_name}'
+        WHERE shop_id={shop_id};
+        '''.format(new_name=new_name, shop_id=shop_id))
+        self._connection.commit()
+    def change_shop_description(self, shop_id: int = None, new_description: str = None) -> None:
+        self._cur.execute('''
+        UPDATE main.shops
+        SET description='{new_description}'
+        WHERE shop_id={shop_id};
+        '''.format(new_description=new_description, shop_id=shop_id))
+        self._connection.commit()
+    def change_shop_photo(self, shop_id: int = None, shop_photo: str = None) -> None:
+        self._cur.execute('''
+        UPDATE main.shops
+        SET shop_photo='{shop_photo}'
+        WHERE shop_id={shop_id};
+        '''.format(shop_photo=shop_photo, shop_id=shop_id))
+        self._connection.commit()
+    def change_shop_status(self, shop_id: int = None, status: str = None):
+        self._cur.execute('''
+        UPDATE main.shops
+        SET is_active='{status}'
+        WHERE shop_id={shop_id};
+        '''.format(status=status, shop_id=shop_id))
+        self._connection.commit()

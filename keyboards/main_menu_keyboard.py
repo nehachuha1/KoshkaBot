@@ -13,7 +13,7 @@ main_menu_kb = InlineKeyboardMarkup(inline_keyboard=[
                              callback_data='get_list_of_shops'),
     ],
     [
-        InlineKeyboardButton(text=LEXICON_RU_BUTTONS['FIND_PRODUCT'],
-                             callback_data='find_product')
+        InlineKeyboardButton(text=LEXICON_RU_BUTTONS['MY_ORDERS'],
+                             callback_data='my_orders')
     ]
 ])

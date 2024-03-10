@@ -16,21 +16,34 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               
               'error_pagination': 'Pagination error!',
 
-              'USER_INFO': '<b>Информация о пользователе:\n\nTelegram ID: {tg_id}\nИмя: {full_name}\nКомната проживания: {room}\nКоличество заказов: {orders_count}</b>',
+              'USER_INFO': '<b>Информация о пользователе:\n\nTelegram ID: {tg_id}\nИмя: {full_name}\nКомната проживания: {room}\nСтатус продавца: {is_seller}\n\
+Количество заказов: {orders_count}</b>',
               'SHOP_INFO': '<b>Магазин "{name}"\n\nОписание:\n{description}\n\nСтатус: {is_active}\nКонтакт для связи: {admin_id}</b>',
               'CHOOSE_PRODUCT': 'Choose product!',
               'PRODUCT_CARD': '<b>{name}\n\nОписание: {description}\nЦена: {price}</b>',
               'START_ORDER': 'Start order message. Confirm data?\n\nUsername ID: {username}\nRoom: {room}\nProduct: {product_name}\nPrice: {price}',
               'ORDER_ACCEPTED': 'Order successfully accepted! Check your orders in "My orders" in main menu!',
               'ORDER_DECLINED': 'You declined your order! Wish you will find a nice one',
-              'ALREADY_REGISTERED': 'You are already registered! Use /menu command'
+              'ALREADY_REGISTERED': 'You are already registered! Use /menu command',
+              'MY_SHOP_MESSAGE': "Welcome to control panel of your shop",
+              'ERROR_MYSHOP_COMMAND': 'You are not the seller!',
+              'CURRENT_SHOP_INFO_MESSAGE': '<b>INFORMATION ABOUT SHOP\n\nName: {name}\nDesc: {description}\nStatus: {is_active}\nAdmin: {admin_id}</b>',
+              'CHANGE_SHOP_INFO': 'Changing shop info message',
+              'INPUT_NEW_SHOP_NAME': 'Enter new shop name\n/cancel_edit to cancel operation',
+              'SUCCESSFUL_CHANGING_SHOP_NAME': 'Вы успешно изменили имя магазина!',
+              'INPUT_NEW_SHOP_DESC': 'Send new description',
+              'SUCCESSFUL_CHANGING_SHOP_DESC': 'Successful changed shop description',
+              'INPUT_NEW_SHOP_PHOTO': 'Send new photo for shop',
+              'SUCCESSFUL_CHANGING_SHOP_PHOTO': 'Successful changed shop photo',
+              'STATUS_CHANGED_SUCCESSFULLY': 'Status changed successfully',
+              'EDIT_PRODUCT_MESSAGE': 'Edit products list menu'
               }
 
 LEXICON_RU_BUTTONS = {
     'STATS_BUTTON': 'Stats',
     'BOT_INFO_BUTTON': 'Bot info button [X]',
     'CHECK_SHOPS': 'To list of shops',
-    'FIND_PRODUCT': 'To find something [X]',
+    'MY_ORDERS': 'To find something [X]',
     'CANCEL': 'cancel button',
     "VISIT_SHOP": "Visit current shop",
     'CANCEL_TO_PRODUCT_LIST': 'cancel to product_list',
@@ -39,5 +52,16 @@ LEXICON_RU_BUTTONS = {
     'DECLINE_ORDER': 'Decline order button',
     '->': '->',
     '<-': '<-',
-    'LEAVE_PRODUCTS_LIST_BUTTON': 'Cancel'
+    'LEAVE_PRODUCTS_LIST_BUTTON': 'Cancel',
+    'EDIT_SHOP_INFO': 'Edit shop inf',
+    'EDIT_SHOP_STATUS_ACTIVE': 'Статус: +',
+    'EDIT_SHOP_STATUS_INACTIVE': 'Статус: -',
+    'CHECK_SHOP_STATS': 'Check shop"s statistics',
+    'EDIT_PRODUCTS_LIST': "Edit products list",
+    'CHECK_SHOP_ORDERS': 'Check my orders',
+    'EDIT': 'Edit',
+    'EDIT_SHOP_INFO:NAME': 'Edit name',
+    'EDIT_SHOP_INFO:DESCRIPTION': 'Edit description',
+    'EDIT_SHOP_INFO:STATUS': 'Edit status',
+    'EDIT_SHOP_INFO:PHOTO': 'Edit photo'
 }

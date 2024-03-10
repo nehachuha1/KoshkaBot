@@ -25,7 +25,10 @@ class MainOuterMiddleware(BaseMiddleware):
         data['db'] = db
         data['cached_db'] = cached_db
         data['is_registered'] = db.check_registration(user.id)
+        if data['is_registered']:
+            data['is_seller'] = db.get_user_info(username=str(user.id))[-2]
         data['is_main_admin'] = db.check_main_admin(user.id)
+        
         return await handler(event, data)
     
 class CheckRegistration(BaseMiddleware):
