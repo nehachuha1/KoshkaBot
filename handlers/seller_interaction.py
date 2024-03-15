@@ -6,10 +6,11 @@ from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
 
 from lexicon.lexicon import LEXICON_RU, LEXICON_RU_BUTTONS
-from filters.filters import ProcessingUserOrder, MyShopPanel, CheckAllowedSymbols, SellerProductInfoFilter
-from services.service import ChangeShopPhoto, ChangeShopDescription, ChangeShopName, prepare_list_products_shop_seller
+from filters.filters import ProcessingUserOrder, MyShopPanel, CheckAllowedSymbols, CheckAllowedSymbolsDigit, SellerProductInfoFilter, ProductCardInteraction, DeletingProductCard
+from services.service import ChangeShopPhoto, ChangeShopDescription, ChangeShopName, prepare_list_products_shop_seller, prepare_shop_statistics, CurrentProduct, DeleteProductCardConfirm
 from keyboards.myshop_main_panel import build_myshop_main_kb
 from keyboards.shop_list_keyboard import get_shop_products_kb_seller
+from keyboards.orders_keyboard import prepare_orders_for_seller
 from database.database import Database, CachedDatabase
 from config.config import DEFAULT_SHOP_PHOTO_ID
 
@@ -221,6 +222,234 @@ async def process_edit_products_list(callback: CallbackQuery, db: Database):
         reply_markup=current_kb.as_markup()
     )
 
-@seller_router.callback_query(SellerProductInfoFilter.filter())
-async def process_edit_product(callback: CallbackQuery, db: Database):
+@seller_router.callback_query(F.data == 'LEAVE_PRODUCT_EDIT')
+async def process_edit_products_list(callback: CallbackQuery, db: Database):
+    current_shop_products = db.get_products_of_shop(shop_id=db.get_user_shop(username=callback.from_user.id))
+
+    products = prepare_list_products_shop_seller(
+        products=current_shop_products
+    )
+
+    current_kb = get_shop_products_kb_seller(buttons=products)
+
     await callback.answer('')
+
+    await callback.message.edit_text(
+        parse_mode='HTML',
+        text=LEXICON_RU['EDIT_PRODUCT_MESSAGE'],
+        reply_markup=current_kb.as_markup()
+    )
+
+@seller_router.callback_query(SellerProductInfoFilter.filter())
+async def process_edit_product(callback: CallbackQuery, db: Database, callback_data: CallbackData):
+    await callback.answer('')
+
+    current_product = db.get_current_product_info(product_id=callback_data.product_id)
+
+    current_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['EDIT_PRODUCT'], callback_data=ProductCardInteraction(
+                shop_id=callback_data.shop_id,
+                product_id=callback_data.product_id,
+                edit_product = True,
+                delete_product = False).pack()
+                )
+        ],
+        [
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['DELETE_PRODUCT'], callback_data=ProductCardInteraction(
+                shop_id=callback_data.shop_id,
+                product_id=callback_data.product_id,
+                edit_product = False,
+                delete_product = True).pack()
+                )
+        ],
+        [
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['CANCEL'], callback_data='LEAVE_PRODUCT_EDIT')
+        ]
+    ])
+
+    await callback.message.edit_text(
+        parse_mode='HTML',
+        text=LEXICON_RU['EDIT_PRODUCT_CARD'].format(
+            name=current_product[1],
+            description=current_product[2],
+            price=current_product[3]
+        ),
+        reply_markup=current_kb
+    )
+# изменение карточки товара
+@seller_router.callback_query(ProductCardInteraction.filter(F.edit_product == True), StateFilter(default_state))
+async def process_edit_product_start(callback: CallbackQuery, cached_db: CachedDatabase, callback_data: CallbackData, state: FSMContext):
+    await state.set_state(CurrentProduct.product_id)
+    await state.update_data(product_id=callback_data.product_id)
+    await state.set_state(CurrentProduct.name)
+
+    await callback.answer('')
+    await callback.message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['NEW_PRODUCT_NAME']
+    )
+
+@seller_router.message(Command(commands=['cancel_edit_product']), ~StateFilter(default_state))
+async def process_edit_product_seller_cancel(message: Message, db: Database, state: FSMContext):
+    await state.clear()
+
+    await message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['CANCEL_EDIT_PRODUCT'],
+        show_alert=True
+    )
+
+@seller_router.message(and_f(StateFilter(CurrentProduct.name), CheckAllowedSymbols()))
+async def process_change_name_product(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+
+    await state.set_state(CurrentProduct.description)
+    await message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['NEW_PRODUCT_DESCRIPTION']
+    )
+
+@seller_router.message(and_f(StateFilter(CurrentProduct.description), CheckAllowedSymbols()))
+async def process_change_description_product(message: Message, state: FSMContext):
+    await state.update_data(description=message.text)
+
+    await state.set_state(CurrentProduct.price)
+    await message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['NEW_PRODUCT_PRICE']
+    )
+
+@seller_router.message(and_f(StateFilter(CurrentProduct.price), CheckAllowedSymbolsDigit()))
+async def process_change_description_product(message: Message, state: FSMContext, db: Database):
+    await state.update_data(price=message.text)
+    result = await state.get_data()
+    await state.clear()
+    db.change_product_info(
+        product_id=result['product_id'],
+        name=result['name'],
+        description=result['description'],
+        price=result['price']
+    )
+    
+    await message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['SUCCESSFULL_CHANGE_PRODUCT']
+    )
+
+    time.sleep(0.7)
+    await message.delete()
+
+# Удаление карточки товара
+@seller_router.callback_query(ProductCardInteraction.filter(F.delete_product == True), StateFilter(default_state))
+async def process_delete_product_seller(callback: CallbackQuery, db: Database, callback_data: CallbackData, state: FSMContext):
+    cur_product_to_delete = db.get_current_product_info(product_id=callback_data.product_id)
+
+    await state.set_state(DeleteProductCardConfirm.product_price)
+    await state.update_data(product_price=cur_product_to_delete[3])
+    await state.set_state(DeleteProductCardConfirm.product_id)
+    await state.update_data(product_id=callback_data.product_id)
+    await state.set_state(DeleteProductCardConfirm.confirm)
+
+    confrim_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['DECLINE_DELETE_PRODUCT_CARD'], callback_data=DeletingProductCard(
+                product_id=callback_data.product_id, confirm_deleting=False).pack()
+                ),
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['CONFIRM_DELETE_PRODUCT_CARD'], callback_data=DeletingProductCard(
+                product_id=callback_data.product_id, confirm_deleting=True).pack()),
+        ]
+    ])
+
+    await callback.message.edit_text(
+        parse_mode='HTML',
+        text=LEXICON_RU['DELETING_PRODUCT_CARD_CONFIRMATION_MESSAGE'],
+        reply_markup=confrim_keyboard
+    )
+# обработать согласие на удаление + отмену удаления
+@seller_router.callback_query(and_f(StateFilter(DeleteProductCardConfirm.confirm), DeletingProductCard.filter(F.confirm_deleting == True)))
+async def process_delete_product_seller_confirmation(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext, db: Database):
+    current_product_price = db.get_current_product_info(product_id=callback_data.product_id)[3]
+    await state.update_data(confirm=True)
+    await state.set_state(DeleteProductCardConfirm.confirm_product_price)
+
+    await callback.message.edit_text(
+        parse_mode='HTML',
+        text=LEXICON_RU['CONFIRM_DELETING_PRODUCT_CARD_WITH_PRICE_MESSAGE'].format(
+            price=current_product_price
+        )
+    )
+
+@seller_router.message(and_f(StateFilter(DeleteProductCardConfirm.confirm_product_price), CheckAllowedSymbolsDigit()))
+async def process_delete_product_seller_confirmation_price(message: Message, state: FSMContext, db: Database):
+    result = await state.get_data()
+
+    if int(message.text) == result['product_price']:
+        await state.clear()
+
+        await message.answer(
+            parse_mode='HTML',
+            text=LEXICON_RU['SUCCESSFULL_DELETE_PRODUCT_CARD']
+        )
+
+        db.delete_product(result['product_id'])
+    else:
+        await state.clear()
+        await message.answer(
+            parse_mode='HTML',
+            text=LEXICON_RU['WRONG_CONFIRMATION_PRICE']
+        )
+
+@seller_router.callback_query(and_f(and_f(StateFilter(DeleteProductCardConfirm.confirm), DeletingProductCard.filter(F.confirm_deleting == False))))
+async def process_delete_product_seller_confirmation(callback: CallbackQuery, state: FSMContext, db: Database):
+    await state.clear()
+    
+    await callback.message.delete()
+
+    await callback.answer(
+        text=LEXICON_RU['DECLINED_DELETE_PRODUCT_CARD_ALERT'],
+        show_alert=True
+    )
+
+# выход из редактирования продукта
+@seller_router.callback_query(F.data == 'LEAVE_PRODUCT_EDIT')
+async def process_leave_product_edit(callback: CallbackQuery):
+    await callback.message.delete()
+
+# просмотр статистики магазина
+@seller_router.callback_query(MyShopPanel.filter(F.check_shop_stats==True))
+async def process_check_shop_stats(callback: CallbackQuery, db: Database, callback_data: CallbackData):
+    await callback.answer('')
+
+    current_shop = db.get_current_shop_info(current_shop=callback_data.shop_id)
+    result = prepare_shop_statistics(db.get_shop_statictics(shop_id=callback_data.shop_id))
+
+    cancel_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['CANCEL'], callback_data='cancel_button_shop_interaction')
+        ]
+    ])
+
+    await callback.message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['SHOP_STATISTICS_MESSAGE'].format(
+            name=current_shop[1],
+            total_count=result['total_count'],
+            total_sum=result['total_sum']
+        ),
+        reply_markup=cancel_kb
+    )
+
+#Просмотр заказов магазина
+@seller_router.callback_query(MyShopPanel.filter(F.check_shop_orders==True))
+async def process_check_shop_orders(callback: CallbackQuery, db: Database, callback_data: CallbackData):
+    await callback.answer('')
+
+    orders = db.get_shop_statictics(shop_id=callback_data.shop_id)
+    current_kb = prepare_orders_for_seller(orders=orders)
+
+    await callback.message.answer(
+        parse_mode='HTML',
+        text=LEXICON_RU['SHOP_ORDERS_MESSAGE'],
+        reply_markup=current_kb
+    )

@@ -115,6 +115,16 @@ class Database:
 
         result = self._cur.fetchone()
         return result
+    
+    def get_shop_statictics(self, shop_id: int = None) -> list:
+        self._cur.execute('''
+        SELECT shop_id, order_id, buyer_id, products_ids, room, totalsum, status
+        FROM main.orders
+        WHERE shop_id={shop_id};
+        '''.format(shop_id=shop_id))
+        result = self._cur.fetchall()
+        return result
+
     def change_shop_name(self, shop_id: int = None, new_name: str = None) -> None:
         self._cur.execute('''
         UPDATE main.shops
@@ -122,6 +132,7 @@ class Database:
         WHERE shop_id={shop_id};
         '''.format(new_name=new_name, shop_id=shop_id))
         self._connection.commit()
+
     def change_shop_description(self, shop_id: int = None, new_description: str = None) -> None:
         self._cur.execute('''
         UPDATE main.shops
@@ -129,6 +140,7 @@ class Database:
         WHERE shop_id={shop_id};
         '''.format(new_description=new_description, shop_id=shop_id))
         self._connection.commit()
+
     def change_shop_photo(self, shop_id: int = None, shop_photo: str = None) -> None:
         self._cur.execute('''
         UPDATE main.shops
@@ -136,10 +148,26 @@ class Database:
         WHERE shop_id={shop_id};
         '''.format(shop_photo=shop_photo, shop_id=shop_id))
         self._connection.commit()
+
     def change_shop_status(self, shop_id: int = None, status: str = None):
         self._cur.execute('''
         UPDATE main.shops
         SET is_active='{status}'
         WHERE shop_id={shop_id};
         '''.format(status=status, shop_id=shop_id))
+        self._connection.commit()
+
+    def change_product_info(self, product_id: int = None, name: str = None, description: str = None, price: int = None):
+        self._cur.execute('''
+        UPDATE main.goods_table
+	    SET name='{name}', description='{description}', price={price}
+	    WHERE product_id={product_id};
+        '''.format(name=name, description=description, price=price, product_id=product_id))
+        self._connection.commit()
+
+    def delete_product(self, product_id: int = None):
+        self._cur.execute('''
+        DELETE FROM main.goods_table
+	    WHERE product_id={product_id};
+        '''.format(product_id=product_id))
         self._connection.commit()

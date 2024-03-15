@@ -1,6 +1,7 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import Message
 from aiogram.filters import BaseFilter
+from typing import List
 
 from config.config import ALLOWED_SYMBOLS
 
@@ -34,12 +35,38 @@ class MyShopPanel(CallbackData, prefix='myshop_panel'):
     edit_products_list: bool = False
     check_shop_orders: bool = False
 
+class ProductCardInteraction(CallbackData, prefix='product_card'):
+    shop_id: int
+    product_id: int
+    edit_product: bool = False
+    delete_product: bool = False
+
+class DeletingProductCard(CallbackData, prefix='delete_product_card'):
+    product_id: int
+    confirm_deleting: bool = False
+
+class ActiveOrder(CallbackData, prefix='active_order_seller'):
+    order_id: int
+    buyer_id: str
+    products_ids: str
+    room: str
+
 class CheckAllowedSymbols(BaseFilter):
     def __init__(self) -> None:
-        self.allowed_symbols = 'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя '
+        self.allowed_symbols = 'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя 1234567890'
     async def __call__(self, message: Message) -> bool:
         flag = True
         for symbol in message.text:
             if symbol.lower() not in self.allowed_symbols:
+                flag = False
+        return flag
+    
+class CheckAllowedSymbolsDigit(BaseFilter):
+    def __init__(self) -> None:
+        self.allowed_symbols = '1234567890'
+    async def __call__(self, message: Message) -> bool:
+        flag = True
+        for symbol in message.text:
+            if symbol not in self.allowed_symbols:
                 flag = False
         return flag

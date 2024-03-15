@@ -35,8 +35,21 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'SUCCESSFUL_CHANGING_SHOP_DESC': 'Successful changed shop description',
               'INPUT_NEW_SHOP_PHOTO': 'Send new photo for shop',
               'SUCCESSFUL_CHANGING_SHOP_PHOTO': 'Successful changed shop photo',
-              'STATUS_CHANGED_SUCCESSFULLY': 'Status changed successfully',
-              'EDIT_PRODUCT_MESSAGE': 'Edit products list menu'
+              'STATUS_CHANGED_SUCCESSFULLY': 'Status changed successfully\nType /myshop to update status button',
+              'EDIT_PRODUCT_MESSAGE': 'Edit products list menu',
+              'EDIT_PRODUCT_CARD': 'Product: \n{name}\nDescription:\n{description}\nPrice:\n{price}',
+              'NEW_PRODUCT_NAME': 'Send new product name\n/cancel_edit_product to cancel editing',
+              'NEW_PRODUCT_DESCRIPTION': 'Send new product description',
+              'NEW_PRODUCT_PRICE': 'Send new product price',
+              'SUCCESSFULL_CHANGE_PRODUCT': 'Successfull changing product',
+              'CANCEL_EDIT_PRODUCT': 'Canceled editing product!',
+              'DELETING_PRODUCT_CARD_CONFIRMATION_MESSAGE': 'Confirmation to remove product card',
+              'DECLINED_DELETE_PRODUCT_CARD_ALERT': 'Declined deleting product card!',
+              'CONFIRM_DELETING_PRODUCT_CARD_WITH_PRICE_MESSAGE': 'Type {price} (product price) to confirm deleting product card',
+              'SUCCESSFULL_DELETE_PRODUCT_CARD': 'Успешное удаление карточки товара!',
+              'WRONG_CONFIRMATION_PRICE': 'Неверно указанная цена товара! Удаление отменено',
+              'SHOP_STATISTICS_MESSAGE': 'Shop {name}\nTotal orders: {total_count}\nTotal sum: {total_sum}',
+              'SHOP_ORDERS_MESSAGE': "Here's your orders!"
               }
 
 LEXICON_RU_BUTTONS = {
@@ -63,5 +76,10 @@ LEXICON_RU_BUTTONS = {
     'EDIT_SHOP_INFO:NAME': 'Edit name',
     'EDIT_SHOP_INFO:DESCRIPTION': 'Edit description',
     'EDIT_SHOP_INFO:STATUS': 'Edit status',
-    'EDIT_SHOP_INFO:PHOTO': 'Edit photo'
+    'EDIT_SHOP_INFO:PHOTO': 'Edit photo',
+    'EDIT_PRODUCT': "Edit current product",
+    'DELETE_PRODUCT': 'Delete current product',
+    'CONFIRM_DELETE_PRODUCT_CARD': 'Confirm',
+    'DECLINE_DELETE_PRODUCT_CARD': 'Decline',
+    'ACTIVE_ORDER_SELLER_MENU': 'Order {order_id}'
 }

@@ -18,6 +18,18 @@ class OrderFillForm(StatesGroup):
     shop_id = State()
     product_id = State()
 
+class CurrentProduct(StatesGroup):
+    product_id = State()
+    name = State()
+    description = State()
+    price = State()
+
+class DeleteProductCardConfirm(StatesGroup):
+    product_price = State()
+    product_id = State()
+    confirm = State()
+    confirm_product_price = State()
+
 class ChangeShopName(StatesGroup):
     shop_name = State()
 
@@ -65,3 +77,14 @@ def prepare_list_products_shop_seller(products: tuple = None) -> list:
 
         buttons.append(button)
     return buttons
+
+def prepare_shop_statistics(orders: list = None):
+    result = dict()
+
+    result['total_count'] = len(orders)
+    result['total_sum'] = 0
+
+    for order in orders:
+        result['total_sum'] += order[5]
+    
+    return result
