@@ -103,12 +103,19 @@ async def process_order_product(callback: CallbackQuery, callback_data: Callback
 # хэндле на фабрику колбэков для кнопок
 @shop_interaction_router.callback_query(ProcessingUserOrder.filter(), ~StateFilter(default_state))
 async def process_next_step_order(callback: CallbackQuery, db: Database, cached_db: CachedDatabase, state: FSMContext, callback_data: CallbackData):
-    
-    result = await state.get_data()
-    
     if callback_data.accepted:
-        # перевод на внутреннюю мидлварь с дальнейшей обработкой заказа | СДЕЛАТЬ ОБРАБОТКУ ИЗ КЭША ЗАКАЗА
+        await state.update_data(order_status='Active')
+        result = await state.get_data()
+        
         cached_db.set_values(f'order:{callback.from_user.id}', result)
+        db.register_new_order(
+            shop_id=result['shop_id'],
+            buyer_id=callback.from_user.id,
+            products_ids=result['product_id'],
+            room=result['room'],
+            totalsum=result['price'],
+            status='Active'
+        )
         await state.clear()
 
         await callback.message.edit_text(

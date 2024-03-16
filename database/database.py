@@ -56,7 +56,23 @@ class Database:
             return True
         else:
             return False
-    
+# после обновления с возможностью заказа нескольких штук одной позиции сделать products_ids как список 
+    def register_new_order(self, shop_id: int = None, buyer_id: int = None, products_ids = None, room: int = None, totalsum: int = None, status: str = 'Active'):
+        self._cur.execute('''
+        INSERT INTO main.orders(
+        shop_id, buyer_id, products_ids, room, totalsum, status)
+        VALUES ({shop_id}, '{buyer_id}', ARRAY['{products_ids}'], '{room}', {totalsum}, '{status}');
+        '''.format(
+            shop_id=shop_id,
+            buyer_id=buyer_id,
+            products_ids=products_ids,
+            room=products_ids,
+            totalsum=totalsum,
+            status=status
+            )
+        )
+        self._connection.commit()
+
     def get_user_shop(self, username: int = None) -> int:
         self._cur.execute('''
         SELECT admin_id, moderators_ids, name, description, is_active, shop_id, shop_photo
@@ -97,6 +113,35 @@ class Database:
         result = self._cur.fetchall()
         return len(result)
     
+    def get_products_names_with_id(self, products_ids: int = None):
+        self._cur.execute('''
+        SELECT shop_id, name, description, product_id
+	    FROM main.goods_table
+        WHERE product_id={products_ids};
+        '''.format(products_ids=[int(x) for x in products_ids][0]))
+        result = self._cur.fetchone()
+        return result[2]
+    
+    def get_order(self, order_id: int = None):
+        self._cur.execute('''
+        SELECT shop_id, buyer_id, products_ids, room, totalsum, status, order_id
+        FROM main.orders
+        WHERE order_id={order_id};
+        '''.format(order_id=order_id))
+
+        result = self._cur.fetchone()
+        return result
+
+    def get_orders_by_user_id(self, buyer_id: int = None):
+        self._cur.execute('''
+        SELECT shop_id, buyer_id, products_ids, room, totalsum, status, order_id
+        FROM main.orders
+        WHERE buyer_id='{buyer_id}';
+        '''.format(buyer_id=buyer_id))
+
+        result = self._cur.fetchall()
+        return result      
+
     def get_products_of_shop(self, shop_id: int = None) -> list:
         self._cur.execute('''
         SELECT shop_id, name, description, price, category, product_id
@@ -163,6 +208,21 @@ class Database:
 	    SET name='{name}', description='{description}', price={price}
 	    WHERE product_id={product_id};
         '''.format(name=name, description=description, price=price, product_id=product_id))
+        self._connection.commit()
+
+    def change_order_status_to_in_progress(self, order_id: int = None) -> None:
+        self._cur.execute('''
+        UPDATE main.orders
+        SET status='In Progress'
+        WHERE order_id={order_id};
+        '''.format(order_id=order_id))
+        self._connection.commit()
+
+    def delete_order(self, order_id: int = None):
+        self._cur.execute('''
+        DELETE FROM main.orders
+	    WHERE order_id={order_id};        
+        '''.format(order_id=order_id))
         self._connection.commit()
 
     def delete_product(self, product_id: int = None):

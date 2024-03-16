@@ -49,14 +49,24 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'SUCCESSFULL_DELETE_PRODUCT_CARD': 'Успешное удаление карточки товара!',
               'WRONG_CONFIRMATION_PRICE': 'Неверно указанная цена товара! Удаление отменено',
               'SHOP_STATISTICS_MESSAGE': 'Shop {name}\nTotal orders: {total_count}\nTotal sum: {total_sum}',
-              'SHOP_ORDERS_MESSAGE': "Here's your orders!"
+              'SHOP_ORDERS_MESSAGE': "Here's your orders. To see more information, type /order with num of order!",
+              'NEW_ORDER_NOTIFICATION': 'You have got new order!',
+              'INFO_ABOUT_ACTIVE_ORDER_MESSAGE': 'Order #{order_id}\nBuyer: {buyer_id}\nProducts: {products}\nRoom: {room}\nTotal sum: {total_sum}',
+              'ACCEPTED_ORDER_BY_SELLER_MESSAGE': "You accepted this order! Order status changed to 'In Progress'.",
+              'DECLINED_ORDER_BY_SELLER_MESSAGE': "You declined this order!",
+              'SELLER_ACCEPTED_YOUR_ORDER_MESSAGE': 'Seller accepted your order!',
+              'SELLER_DECLINED_YOUR_ORDER_MESSAGE': 'Seller declined your order!',
+              'ERROR_ORDER_NUM': 'Wrong order num!',
+              'SHOP_ORDERS_USER_MESSAGE': "Here's your orders. To see more information, type /info with num of order!",
+              'USER_ORDER_INFO_MESSAGE': 'Order #{order_id}\nRoom: {room}\nTotal sum: {total_sum}\nStatus: {status}',
+              'WRONG_ORDER_ID_INFO': 'Wrong order ID number!'
               }
 
 LEXICON_RU_BUTTONS = {
     'STATS_BUTTON': 'Stats',
     'BOT_INFO_BUTTON': 'Bot info button [X]',
     'CHECK_SHOPS': 'To list of shops',
-    'MY_ORDERS': 'To find something [X]',
+    'MY_ORDERS': 'Check my orders',
     'CANCEL': 'cancel button',
     "VISIT_SHOP": "Visit current shop",
     'CANCEL_TO_PRODUCT_LIST': 'cancel to product_list',
@@ -81,5 +91,7 @@ LEXICON_RU_BUTTONS = {
     'DELETE_PRODUCT': 'Delete current product',
     'CONFIRM_DELETE_PRODUCT_CARD': 'Confirm',
     'DECLINE_DELETE_PRODUCT_CARD': 'Decline',
-    'ACTIVE_ORDER_SELLER_MENU': 'Order {order_id}'
+    'ACTIVE_ORDER_SELLER_MENU': 'Order {order_id}',
+    'ACCEPT_ORDER_FROM_USER': 'Accept',
+    'DECLINE_ORDER_FROM_USER': 'Decline'
 }

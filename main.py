@@ -6,7 +6,7 @@ import logging
 
 from config.config import load_env_values, Config
 from middlewares.outer.outer_middlewares import MainOuterMiddleware, CheckRegistration
-from middlewares.inner.inner_middlewares import AcceptingOrder
+from middlewares.inner.inner_middlewares import AcceptingOrder, HandleOrderBySeller
 
 from handlers.registration_handler import registration_router
 from handlers.main_menu import main_menu_router
@@ -38,6 +38,8 @@ async def main() -> None:
     # сюда подключить миддлвари
     dp.update.outer_middleware(MainOuterMiddleware())
     registration_router.message.outer_middleware(CheckRegistration())
+    shop_interaction_router.callback_query.middleware(AcceptingOrder())
+    seller_router.callback_query.middleware(HandleOrderBySeller())
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

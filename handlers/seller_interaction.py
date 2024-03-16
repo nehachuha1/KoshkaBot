@@ -6,8 +6,8 @@ from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
 
 from lexicon.lexicon import LEXICON_RU, LEXICON_RU_BUTTONS
-from filters.filters import ProcessingUserOrder, MyShopPanel, CheckAllowedSymbols, CheckAllowedSymbolsDigit, SellerProductInfoFilter, ProductCardInteraction, DeletingProductCard
-from services.service import ChangeShopPhoto, ChangeShopDescription, ChangeShopName, prepare_list_products_shop_seller, prepare_shop_statistics, CurrentProduct, DeleteProductCardConfirm
+from filters.filters import MyShopPanel, CheckAllowedSymbols, CheckAllowedSymbolsDigit, SellerProductInfoFilter, ProductCardInteraction, DeletingProductCard, ActiveOrder, HandleOrderBySeller
+from services.service import ChangeShopPhoto, ChangeShopDescription, ChangeShopName, prepare_list_products_shop_seller, prepare_shop_statistics, CurrentProduct, DeleteProductCardConfirm, active_order_keyboard, prepare_text_orders
 from keyboards.myshop_main_panel import build_myshop_main_kb
 from keyboards.shop_list_keyboard import get_shop_products_kb_seller
 from keyboards.orders_keyboard import prepare_orders_for_seller
@@ -440,7 +440,6 @@ async def process_check_shop_stats(callback: CallbackQuery, db: Database, callba
         reply_markup=cancel_kb
     )
 
-#Просмотр заказов магазина
 @seller_router.callback_query(MyShopPanel.filter(F.check_shop_orders==True))
 async def process_check_shop_orders(callback: CallbackQuery, db: Database, callback_data: CallbackData):
     await callback.answer('')
@@ -448,8 +447,60 @@ async def process_check_shop_orders(callback: CallbackQuery, db: Database, callb
     orders = db.get_shop_statictics(shop_id=callback_data.shop_id)
     current_kb = prepare_orders_for_seller(orders=orders)
 
+    return_message = prepare_text_orders(orders=orders)
+
     await callback.message.answer(
         parse_mode='HTML',
-        text=LEXICON_RU['SHOP_ORDERS_MESSAGE'],
+        text=return_message,
         reply_markup=current_kb
     )
+
+@seller_router.message(Command(commands=['order']))
+async def process_get_info_about_active_order_text(message: Message, db: Database):
+    msg_params = message.text.split(' ')[1]
+    current_order = db.get_order(order_id=msg_params)
+
+    
+    if db.get_current_shop_info(current_shop=current_order[0])[0] == str(message.from_user.id):
+        current_products = db.get_products_names_with_id(current_order[2])
+        current_keyboard = active_order_keyboard(order_id=msg_params)
+
+        await message.answer(
+            parse_mode='HTML',
+            text=LEXICON_RU['INFO_ABOUT_ACTIVE_ORDER_MESSAGE'].format(
+                order_id=current_order[-1],
+                buyer_id=current_order[1],
+                products=current_products[2],
+                room=current_order[3],
+                total_sum=current_order[-3]
+            ),
+            reply_markup=current_keyboard
+        )
+    else:
+        await message.answer(
+            parse_mode='HTML',
+            text=LEXICON_RU['ERROR_ORDER_NUM']
+        )
+
+        time.sleep(3)
+        message.delete()
+
+@seller_router.callback_query(HandleOrderBySeller.filter())
+async def processing_order_by_seller(callback: CallbackQuery, callback_data: CallbackData, cached_db: CachedDatabase, db: Database):
+    if callback_data.accept_order:
+        db.change_order_status_to_in_progress(order_id=callback_data.order_id)
+        cached_db.set_values(f'handle_order:id{callback.from_user.id}', tuple([True, callback_data.order_id]))
+
+        await callback.answer(
+            text=LEXICON_RU['ACCEPTED_ORDER_BY_SELLER_MESSAGE'],
+            show_alert=True
+        )
+
+    else:
+        db.delete_order(order_id=callback_data.order_id)
+        cached_db.set_values(f'handle_order:id{callback.from_user.id}', tuple([False, callback_data.order_id]))
+
+        await callback.answer(
+            text=LEXICON_RU['DECLINED_ORDER_BY_SELLER_MESSAGE'],
+            show_alert=True
+        )

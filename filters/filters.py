@@ -51,6 +51,10 @@ class ActiveOrder(CallbackData, prefix='active_order_seller'):
     products_ids: str
     room: str
 
+class HandleOrderBySeller(CallbackData, prefix='handle_order'):
+    order_id: int
+    accept_order: bool = None
+
 class CheckAllowedSymbols(BaseFilter):
     def __init__(self) -> None:
         self.allowed_symbols = 'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя 1234567890'
