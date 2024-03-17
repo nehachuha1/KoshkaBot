@@ -235,6 +235,13 @@ class Database:
         '''.format(status='Completed', order_id=order_id))
 
         self._connection.commit()
+    def create_new_product(self, shop_id: int = None, name: str = None, description: str = None, price: int = None, category: str = 'Food'):
+        self._cur.execute('''
+        INSERT INTO main.goods_table(
+        shop_id, name, description, price, category)
+        VALUES ({shop_id}, '{name}', '{description}', {price}, '{category}');
+        '''.format(shop_id=shop_id, name=name, description=description, price=price, category=category))
+        self._connection.commit()
 
     def delete_order(self, order_id: int = None):
         self._cur.execute('''

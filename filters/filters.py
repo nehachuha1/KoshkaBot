@@ -51,6 +51,10 @@ class ActiveOrder(CallbackData, prefix='active_order_seller'):
     products_ids: str
     room: str
 
+class CreateNewProduct(CallbackData, prefix='create_new_product'):
+    admin_id: int
+    shop_id: int
+
 class HandleOrderBySeller(CallbackData, prefix='handle_order'):
     order_id: int
     accept_order: bool = None

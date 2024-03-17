@@ -30,7 +30,7 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'INPUT_NEW_SHOP_PHOTO': 'Send new photo for shop',
               'SUCCESSFUL_CHANGING_SHOP_PHOTO': 'Successful changed shop photo',
               'STATUS_CHANGED_SUCCESSFULLY': 'Status changed successfully\nType /myshop to update status button',
-              'EDIT_PRODUCT_MESSAGE': 'Edit products list menu',
+              'EDIT_PRODUCT_MESSAGE': 'Edit products list menu\nType /product with ID of your product to edit it.\n\n',
               'EDIT_PRODUCT_CARD': 'Product: \n{name}\nDescription:\n{description}\nPrice:\n{price}',
               'NEW_PRODUCT_NAME': 'Send new product name\n/cancel_edit_product to cancel editing',
               'NEW_PRODUCT_DESCRIPTION': 'Send new product description',
@@ -62,7 +62,15 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'ORDER_COMPLETED_BY_USER': 'Successfully closed order #{order_id}. Thank you! [USER MESSAGE]',
               'ERROR_BY_CLOSING_ORDER_BY_USER': 'Error! Try again',
               'ORDER_COMPLETED_BY_SELLER': 'Successfully closed order.',
-              'ERROR_BY_CLOSING_ORDER_BY_SELLER': 'Error! Try again'
+              'ERROR_BY_CLOSING_ORDER_BY_SELLER': 'Error! Try again',
+              'PRODUCTS_EDIT_LIST_MESSAGE_TEMPLATE': "#{serial_number}: {name}. ID: {product_id}\n",
+              'ERROR_GETTING_PRODUCT_BY_SELLER': 'Error! Try again.',
+              'CANCEL_CREATE_PRODUCT': 'Canceled creating new product!',
+              'CREATE_PRODUCT_NAME': 'Input name of product.\n\nTO cancel creating, type /cancel_create_product',
+              'CREATE_PRODUCT_DESCRIPTION': 'Input description',
+              'CREATE_PRODUCT_PRICE': 'Input product price',
+              'SUCCESSFULLY_CREATED_NEW_PRODUCT': 'New product has registered. Re-open your products!',
+              'WRONG_INPUT_SYMBOLS': 'I fount denied symbols in your message! Try again.'
               }
 
 LEXICON_RU_BUTTONS = {
@@ -98,5 +106,6 @@ LEXICON_RU_BUTTONS = {
     'ACCEPT_ORDER_FROM_USER': 'Accept',
     'DECLINE_ORDER_FROM_USER': 'Decline',
     'USER_EDIT_ROOM_BUTTON': 'Change room number',
-    'COMPLETE_ORDER': 'Complete order btn'
+    'COMPLETE_ORDER': 'Complete order btn',
+    'ADD_NEW_PRODUCT': 'Add product'
 }

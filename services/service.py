@@ -45,6 +45,11 @@ class ChangeUserRoom(StatesGroup):
 class ChangeShopPhoto(StatesGroup):
     shop_photo = State()
 
+class CreateNewProductFSM(StatesGroup):
+    name = State()
+    description = State()
+    price = State()
+
 def prepare_user_info(user_info: tuple = None):
     return LEXICON_RU['USER_INFO'].format(tg_id=user_info[0],
                                           full_name=user_info[1],
@@ -68,21 +73,12 @@ def prepare_list_products_shop(products: tuple = None) -> list:
         buttons.append(button)
     return buttons
 
-def prepare_list_products_shop_seller(products: tuple = None) -> list:
-    buttons = list()
-
+def prepare_list_products_shop_seller(products: tuple = None) -> str:
+    result = ''
+    serial_number = 0
     for product in products:
-        button = InlineKeyboardButton(
-            text=product[1],
-            callback_data=SellerProductInfoFilter(
-                shop_id=product[0],
-                name=product[1],
-                product_id=product[-1]
-            ).pack()
-        )
-
-        buttons.append(button)
-    return buttons
+        result += LEXICON_RU['PRODUCTS_EDIT_LIST_MESSAGE_TEMPLATE'].format(serial_number=serial_number, name=product[1], product_id=product[-1])
+    return result
 
 def prepare_shop_statistics(orders: list = None):
     result = dict()
