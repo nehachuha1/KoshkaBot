@@ -6,7 +6,7 @@ from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
 
 from lexicon.lexicon import LEXICON_RU, LEXICON_RU_BUTTONS
-from filters.filters import MyShopPanel, CheckAllowedSymbols, CheckAllowedSymbolsDigit, SellerProductInfoFilter, ProductCardInteraction, DeletingProductCard, ActiveOrder, HandleOrderBySeller
+from filters.filters import MyShopPanel, CheckAllowedSymbols, CheckAllowedSymbolsDigit, SellerProductInfoFilter, ProductCardInteraction, DeletingProductCard, HandleOrderBySeller, CompleteOrder
 from services.service import ChangeShopPhoto, ChangeShopDescription, ChangeShopName, prepare_list_products_shop_seller, prepare_shop_statistics, CurrentProduct, DeleteProductCardConfirm, active_order_keyboard, prepare_text_orders
 from keyboards.myshop_main_panel import build_myshop_main_kb
 from keyboards.shop_list_keyboard import get_shop_products_kb_seller
@@ -463,7 +463,24 @@ async def process_get_info_about_active_order_text(message: Message, db: Databas
     
     if db.get_current_shop_info(current_shop=current_order[0])[0] == str(message.from_user.id):
         current_products = db.get_products_names_with_id(current_order[2])
-        current_keyboard = active_order_keyboard(order_id=msg_params)
+
+        if current_order[-2] == 'Active':
+            current_keyboard = active_order_keyboard(order_id=msg_params)
+        elif current_order[-2] == 'In Progress':
+            current_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [
+                    InlineKeyboardButton(text=LEXICON_RU_BUTTONS['COMPLETE_ORDER'], callback_data=CompleteOrder(user_id=message.from_user.id, order_id=msg_params, is_seller=True).pack())
+                ],
+                [
+                    InlineKeyboardButton(text=LEXICON_RU_BUTTONS['CANCEL'], callback_data='cancel_button_shop_interaction')
+                ]
+        ])
+        elif current_order[-2] == 'Completed':
+            current_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=LEXICON_RU_BUTTONS['CANCEL'], callback_data='cancel_button_shop_interaction')
+        ]
+        ])
 
         await message.answer(
             parse_mode='HTML',
@@ -485,11 +502,32 @@ async def process_get_info_about_active_order_text(message: Message, db: Databas
         time.sleep(3)
         message.delete()
 
+@seller_router.callback_query(CompleteOrder.filter(F.is_seller == True))
+async def process_complete_order_by_user(callback: CallbackQuery, callback_data: CallbackData, db: Database):
+    current_order = db.get_order(order_id=callback_data.order_id)
+
+    if db.get_current_shop_info(current_shop=current_order[0])[0] == str(callback.from_user.id):
+        await callback.message.delete()
+
+        db.complete_order(order_id=callback_data.order_id)
+
+        await callback.message.answer(
+            parse_mode='HTML',
+            text=LEXICON_RU['ORDER_COMPLETED_BY_SELLER'].format(order_id=callback_data.order_id)
+        )
+    else:
+        await callback.message.answer(
+            parse_mode='HTML',
+            text=LEXICON_RU['ERROR_BY_CLOSING_ORDER_BY_SELLER']
+        )
+
 @seller_router.callback_query(HandleOrderBySeller.filter())
 async def processing_order_by_seller(callback: CallbackQuery, callback_data: CallbackData, cached_db: CachedDatabase, db: Database):
     if callback_data.accept_order:
         db.change_order_status_to_in_progress(order_id=callback_data.order_id)
         cached_db.set_values(f'handle_order:id{callback.from_user.id}', tuple([True, callback_data.order_id]))
+
+        await callback.message.delete()
 
         await callback.answer(
             text=LEXICON_RU['ACCEPTED_ORDER_BY_SELLER_MESSAGE'],
@@ -499,6 +537,8 @@ async def processing_order_by_seller(callback: CallbackQuery, callback_data: Cal
     else:
         db.delete_order(order_id=callback_data.order_id)
         cached_db.set_values(f'handle_order:id{callback.from_user.id}', tuple([False, callback_data.order_id]))
+
+        await callback.message.delete()
 
         await callback.answer(
             text=LEXICON_RU['DECLINED_ORDER_BY_SELLER_MESSAGE'],

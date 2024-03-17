@@ -8,14 +8,8 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'main_menu_message': 'Main menu message',
               'to_use_menu': 'Use /menu',
               'loading_shops_1': 'Loading list of shops...',
-
               'loading_shops_2': 'Baking pies...',
-              'loading_shops_3': 'Cooking some pasta...',
-              'loading_shops_4': 'Do some hiking...',
-              'loading_shops_5': 'Laying on a sofa...',
-              
               'error_pagination': 'Pagination error!',
-
               'USER_INFO': '<b>Информация о пользователе:\n\nTelegram ID: {tg_id}\nИмя: {full_name}\nКомната проживания: {room}\nСтатус продавца: {is_seller}\n\
 Количество заказов: {orders_count}</b>',
               'SHOP_INFO': '<b>Магазин "{name}"\n\nОписание:\n{description}\n\nСтатус: {is_active}\nКонтакт для связи: {admin_id}</b>',
@@ -51,7 +45,7 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'SHOP_STATISTICS_MESSAGE': 'Shop {name}\nTotal orders: {total_count}\nTotal sum: {total_sum}',
               'SHOP_ORDERS_MESSAGE': "Here's your orders. To see more information, type /order with num of order!",
               'NEW_ORDER_NOTIFICATION': 'You have got new order!',
-              'INFO_ABOUT_ACTIVE_ORDER_MESSAGE': 'Order #{order_id}\nBuyer: {buyer_id}\nProducts: {products}\nRoom: {room}\nTotal sum: {total_sum}',
+              'INFO_ABOUT_ACTIVE_ORDER_MESSAGE': 'Order #{order_id}\nBuyer: <a href="tg://user?id={buyer_id}">Buyer</a>\nProducts: {products}\nRoom: {room}\nTotal sum: {total_sum}',
               'ACCEPTED_ORDER_BY_SELLER_MESSAGE': "You accepted this order! Order status changed to 'In Progress'.",
               'DECLINED_ORDER_BY_SELLER_MESSAGE': "You declined this order!",
               'SELLER_ACCEPTED_YOUR_ORDER_MESSAGE': 'Seller accepted your order!',
@@ -59,12 +53,21 @@ LEXICON_RU = {'/start': 'START DESC\n\nYou are not registered! Use /register to 
               'ERROR_ORDER_NUM': 'Wrong order num!',
               'SHOP_ORDERS_USER_MESSAGE': "Here's your orders. To see more information, type /info with num of order!",
               'USER_ORDER_INFO_MESSAGE': 'Order #{order_id}\nRoom: {room}\nTotal sum: {total_sum}\nStatus: {status}',
-              'WRONG_ORDER_ID_INFO': 'Wrong order ID number!'
+              'WRONG_ORDER_ID_INFO': 'Wrong order ID number!',
+              'ABOUT_BOT': '<b>Created and designed by @nehachuha1.\n\nVersion: alpha_0.1</b>',
+              'SEND_NEW_ROOM_NUMBER_MESSAGE':'Send new room number.',
+              'CHANGED_ROOM_NUM_SUCCESSFULLY':'Changed room number successfully!',
+              'CANCEl_EDITING_USER_ROOM':'Cancel editing user room successfully!',
+              'WRONG_ROOM_NUM': 'Wrong room number. Try again.',
+              'ORDER_COMPLETED_BY_USER': 'Successfully closed order #{order_id}. Thank you! [USER MESSAGE]',
+              'ERROR_BY_CLOSING_ORDER_BY_USER': 'Error! Try again',
+              'ORDER_COMPLETED_BY_SELLER': 'Successfully closed order.',
+              'ERROR_BY_CLOSING_ORDER_BY_SELLER': 'Error! Try again'
               }
 
 LEXICON_RU_BUTTONS = {
     'STATS_BUTTON': 'Stats',
-    'BOT_INFO_BUTTON': 'Bot info button [X]',
+    'BOT_INFO_BUTTON': 'About bot',
     'CHECK_SHOPS': 'To list of shops',
     'MY_ORDERS': 'Check my orders',
     'CANCEL': 'cancel button',
@@ -93,5 +96,7 @@ LEXICON_RU_BUTTONS = {
     'DECLINE_DELETE_PRODUCT_CARD': 'Decline',
     'ACTIVE_ORDER_SELLER_MENU': 'Order {order_id}',
     'ACCEPT_ORDER_FROM_USER': 'Accept',
-    'DECLINE_ORDER_FROM_USER': 'Decline'
+    'DECLINE_ORDER_FROM_USER': 'Decline',
+    'USER_EDIT_ROOM_BUTTON': 'Change room number',
+    'COMPLETE_ORDER': 'Complete order btn'
 }

@@ -21,7 +21,7 @@ async def process_get_list_of_shops(callback: CallbackQuery, db: Database, cache
     cached_db.set_values(key_value=str(callback.from_user.id), values=1)
     current_shop = db.get_current_shop_info(1)
     time.sleep(1)
-    for num in range(2, 3): # range(2, 6)
+    for num in range(2, 3):
         await callback.message.edit_text(text=LEXICON_RU[f'loading_shops_{num}'])
         time.sleep(1)
     await callback.message.delete()

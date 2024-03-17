@@ -66,7 +66,7 @@ class Database:
             shop_id=shop_id,
             buyer_id=buyer_id,
             products_ids=products_ids,
-            room=products_ids,
+            room=room,
             totalsum=totalsum,
             status=status
             )
@@ -216,6 +216,24 @@ class Database:
         SET status='In Progress'
         WHERE order_id={order_id};
         '''.format(order_id=order_id))
+        self._connection.commit()
+
+    def change_user_room(self, user_id: int = None, room: int = None):
+        self._cur.execute('''
+        UPDATE main.users
+        SET room={room}
+        WHERE username='{user_id}';
+        '''.format(room=room, user_id=user_id))
+
+        self._connection.commit()
+
+    def complete_order(self, order_id: int = None):
+        self._cur.execute('''
+        UPDATE main.orders
+	    SET status='{status}'
+	    WHERE order_id={order_id};
+        '''.format(status='Completed', order_id=order_id))
+
         self._connection.commit()
 
     def delete_order(self, order_id: int = None):

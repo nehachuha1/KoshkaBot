@@ -48,7 +48,6 @@ async def process_get_main_page_shop(callback: CallbackQuery, callback_data: Cal
 async def process_get_product_info(callback: CallbackQuery, callback_data: CallbackData, db: Database):
     current_product = db.get_current_product_info(callback_data.product_id)
 
-    # CHECK BUTTON FOR ORDER
     order_product = InlineKeyboardButton(text=LEXICON_RU_BUTTONS['ORDER_PRODUCT'], callback_data=
                                          OrderProductFilter(shop_id=current_product[0], product_id=current_product[-1]).pack())
     cancel_to_products_list = InlineKeyboardButton(text=LEXICON_RU_BUTTONS['CANCEL_TO_PRODUCT_LIST'], callback_data=
@@ -100,7 +99,7 @@ async def process_order_product(callback: CallbackQuery, callback_data: Callback
         ),
         reply_markup=buttons
     )
-# хэндле на фабрику колбэков для кнопок
+
 @shop_interaction_router.callback_query(ProcessingUserOrder.filter(), ~StateFilter(default_state))
 async def process_next_step_order(callback: CallbackQuery, db: Database, cached_db: CachedDatabase, state: FSMContext, callback_data: CallbackData):
     if callback_data.accepted:

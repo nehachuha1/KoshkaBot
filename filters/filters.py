@@ -55,6 +55,11 @@ class HandleOrderBySeller(CallbackData, prefix='handle_order'):
     order_id: int
     accept_order: bool = None
 
+class CompleteOrder(CallbackData, prefix='complete_order'):
+    user_id: int
+    order_id: int
+    is_seller: bool = False
+
 class CheckAllowedSymbols(BaseFilter):
     def __init__(self) -> None:
         self.allowed_symbols = 'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя 1234567890'

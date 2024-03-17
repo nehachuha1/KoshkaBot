@@ -39,6 +39,9 @@ class ChangeShopName(StatesGroup):
 class ChangeShopDescription(StatesGroup):
     shop_description = State()
 
+class ChangeUserRoom(StatesGroup):
+    user_room = State()
+
 class ChangeShopPhoto(StatesGroup):
     shop_photo = State()
 
